@@ -47,7 +47,7 @@ struct SnapGrabber {
 //  @available(macOS 13, *)
   func snap(start millis: Int, count snaps: Int) async throws {
     for snap in 0..<snaps {
-      let snapMillis = Int64(millis + snap)
+      let snapMillis = CMTimeValue(millis + snap)
       let pngName = snapName(snapMillis)
       print("    --> ", pngName)
 

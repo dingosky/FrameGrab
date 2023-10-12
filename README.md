@@ -32,62 +32,47 @@ Example:
 
 ## Discussion
 
-Note: The file `vids/10_secs.mp4` is the first 10 seconds of example MBARI video.
-
-#### Video info
-
-The file `vids/10_secs-frame.info` contains the frame information for the video, obtained via:
+The file `vids/10_secs.mp4` is the first 10 seconds of example MBARI video. A `frameRate` of **6000/1001** is obtained using:
 
 ```sh
-  ffprobe -show_frames 10_secs.mp4 > 10_secs-frame.info
+  ffprobe -v error \
+    -select_streams v:0 \
+    -of default=noprint_wrappers=1:nokey=1
+    -show_entries stream=avg_frame_rate \
+    vids/10_secs.mp4
 ```
-
-Of particular note, the **info** file shows:
-
-    1st frame: best_effort_timestamp_time=0.000000
-    2nd frame: best_effort_timestamp_time=0.016683
-    3rd frame: best_effort_timestamp_time=0.033367
 
 #### Images
 
 Note: The following comparisons use images in `image/10_secs/`
 
-Comparing the `ffmpeg` images
+Comparing the `ffmpeg` images, the first three frame advances are:
 ```
     ff_10_secs_0_.jpg -> ff_10_secs_1_.jpg
+    ff_10_secs_16_.jpg -> ff_10_secs_17_.jpg
+    ff_10_secs_33_.jpg -> ff_10_secs_34_.jpg
 ```    
 
-the frame advances going from `0` to `1` millisecond. That does not seem to agree with the **info** file.
-
-Comparing `AVFoundation` images
+Comparing `AVFoundation` images, the first three frame advances are:
 
 ```
-    av_10_secs_0_.jpg -> av_10_secs_1_.jpg
-```
-
-there is no frame advance. The frame does not advance until
-
-```
-    av_10_secs_16_.jpg -> av_10_secs_17_.jpg
-```    
-
-which seems to agree with the **info** file.
-
-This one-off frame timing extends into the video. Looking at where the `ffmpeg` frame advances at 10 frames (using the **info** file), the frame advances at:
+    av_10_secs_16_.png -> av_10_secs_17_.png
+    av_10_secs_33_.png -> av_10_secs_34_.png
+    av_10_secs_50_.png -> av_10_secs_51_.png
 
 ```
-    ff_10_secs_166_.jpg -> ff_10_secs_167_.jpg    
-```
 
-and for `AVFoundation`, the frame advances at
+This one-off frame timing continues through the video:
 
 ```
-    av_10_secs_166_.jpg -> av_10_secs_167_.jpg
+    ff_10_secs_6139_.jpg -> ff_10_secs_6140_.jpg
+    av_10_secs_6139_.png -> av_10_secs_6140_.png
 ```
 
-However, `ff_10_secs_166_.jpg` is the same as `av_10_secs_167_.jpg`, that is, the frameworks disagree by one frame.
+with `ff_10_secs_6139_.jpg` being the same as `av_10_secs_6140_.png`
 
 
+The `ffmpeg` frame advance going from `0` to `1` millisecond seems peculiar to me.
 
 
     
